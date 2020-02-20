@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+
 from apps.user.models import User
 
 
@@ -11,13 +13,13 @@ class Invoice(models.Model):
 	]
 	invoiceCode = models.CharField(max_length=30, blank=False, verbose_name='发票代码')
 	invoiceNum = models.CharField(max_length=30, blank=True, default='', verbose_name='发票号码')
-	invoiceData = models.DateField(blank=True, default='', verbose_name='开票日期')
+	invoiceDate = models.DateField(blank=True, default=timezone.now, verbose_name='开票日期')
 	invoiceType = models.CharField(max_length=30, blank=True, default='', verbose_name='发票类型')
 	sellerInfo = models.TextField(blank=True, default='', verbose_name='卖家信息')  # 存储形式为json_string
 	purchaserInfo = models.TextField(blank=True, default='', verbose_name='买家信息')  # 存储形式为json_string
 	commodityInfo = models.TextField(blank=True, default='', verbose_name='商品信息')  # 存储形式为json_string
-	uploadData = models.DateField(auto_now_add=True, verbose_name='上传时间')
-	processData = models.DateField(auto_now=True, verbose_name='审批时间')
+	uploadDate = models.DateField(auto_now_add=True, verbose_name='上传时间')
+	processDate = models.DateField(auto_now=True, verbose_name='审批时间')
 	status = models.IntegerField(choices=STATUS_ITEMS, default=0, verbose_name='审批状态')
 	processer = models.CharField(max_length=30, blank=True, default='', verbose_name='审批人')
 	uploader = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='invoice', verbose_name='上传者')
