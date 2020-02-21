@@ -3,9 +3,12 @@
 from django.urls import path
 from apps.invoice.views.recognize import RecognizeInvoice
 from apps.invoice.views.create import CreateInvoice
+from apps.invoice.views.show import ReimburseInvoice,ShowInvoices
 
 
 urlpatterns =[
 	path('recognizeInvoice/', RecognizeInvoice.as_view(), name='recognizeInvoice'),
 	path('createInvoice/', CreateInvoice.as_view(), name='createInvoice'),
+	path('showInvoice/',ShowInvoices.as_view()),
+	path('reimburseInvoice/',ReimburseInvoice.as_view())
 ]
