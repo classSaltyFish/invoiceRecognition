@@ -1,34 +1,51 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import json
-
+import json,requests
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib import auth
 from rest_framework.authtoken.models import Token
-
+from invoiceRecognition.local_setting import APP_ID,APP_SECRETKEY
 from apps.user.models import User
 from apps.user.serializers import UserSerializer
 
-
 # 小程序登录视图
 class Login(APIView):
+	"""
+	    微信登录逻辑
+	    """
+
 	def post(self, request):
-		postbody = request.body
-		json_result = json.loads(postbody)
+		# 前端发送code到后端,后端发送网络请求到微信服务器换取openid
+		code = request.data.get('code')
+		if not code:
+			return Response({'message': '缺少code'}, status=status.HTTP_400_BAD_REQUEST)
+		url = "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code" \
+			.format(APP_ID, APP_SECRETKEY, code)
+		r = requests.get(url)
+		res = json.loads(r.text)
+		openid = res['openid'] if 'openid' in res else None
+		# 判断调用是否成功
+		if not openid:
+			return Response({'message': '微信调用失败'}, status=status.HTTP_503)
+
+		# 如果用户是第一次登录，则自动创建账户
+		# 如果用户不是第一次登录，则不会自动创建账户
 		try:
-			user_info = json_result['user_info']
-			openId = user_info['openId']
-			nickname = user_info['nickname']
-		except KeyError:
-			return Response({"mag": "传入数据格式错误"}, status=status.HTTP_400_BAD_REQUEST)
-		user, created = User.objects.get_or_create(openId=openId)
-		user.nickname = nickname
-		if not user:
-			return Response({"mag": "error"})
-		else:
-			return Response({"mag": "success"})
+			user = User.objects.get(openId=openid)
+		except:
+			user = User()
+			user.openId = openid
+			user.save()
+
+		# 返回openId和状态码,其实感觉还需要一个token
+		resp_data = {
+			"user_id": user.openId,
+			"status": status.HTTP_200_OK,
+		}
+
+		return Response(resp_data)
 
 
 # 管理系统登录视图
