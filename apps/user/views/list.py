@@ -6,14 +6,15 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from utils.dataFilter import DataFilter
 
-
+#用户分页器
 class UserPagination(PageNumberPagination):
     page_size = 3
     page_size_query_param = 'page_size'
     page_query_param = 'page'
     max_page_size = 6
 
-
+#管理端视图
+#url：user/list/
 class UserList(APIView):
     """分页查询用户"""
 

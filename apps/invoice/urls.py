@@ -12,5 +12,7 @@ urlpatterns =[
 	path('createInvoice/', CreateInvoice.as_view(), name='createInvoice'),
 	path('showInvoice/',ShowInvoices.as_view()),
 	path('reimburseInvoice/',ReimburseInvoice.as_view()),
+
+	#管理端视图
 	path('list/',InvoiceList.as_view())
 ]

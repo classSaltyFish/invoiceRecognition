@@ -20,3 +20,5 @@ class RecognizeInvoice(APIView):
 			"commodityInfo": result.get("commodityInfo", "")
 		}
 		return Response({"result": data})
+
+

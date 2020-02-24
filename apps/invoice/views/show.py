@@ -7,6 +7,8 @@ from rest_framework import status
 
 # Create your views here.
 
+
+#小程序端视图
 class ShowInvoices(APIView):
     '''
     显示用户未得到报销和未通过的发票
@@ -17,9 +19,6 @@ class ShowInvoices(APIView):
     请求参数：用户id
     返回参数：json数据
 
-
-    post：
-    添加发票
     '''
 
     def get(self, request):
@@ -47,7 +46,7 @@ class ShowInvoices(APIView):
         }
         return Response(context, status=status.HTTP_200_OK)
 
-
+#小程序端视图
 class ReimburseInvoice(APIView):
     '''
     显示得到报销的发票
