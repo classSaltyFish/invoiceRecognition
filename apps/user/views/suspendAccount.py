@@ -1,5 +1,7 @@
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 from apps.user.models import User
-from apps.invoice.models import Invoice
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,13 +9,18 @@ import json
 
 
 # 管理端视图
-#url:user/suspend/
+# url:user/suspend/
 class SuspendUser(APIView):
     """冻结用户"""
+    # 测试用
+    # permission_classes = (AllowAny,)
+
+    # 运行使用
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         """
-
         :param request:要冻结的用户的数组Key=[0,1,2,3]
         :return:
         """
@@ -32,13 +39,18 @@ class SuspendUser(APIView):
 
 
 # 管理端视图
-#url:user/unsuspend
+# url:user/unsuspend
 class UnSuspendUser(APIView):
-    '''解冻用户'''
+    """解冻用户"""
+    # 测试用
+    # permission_classes = (AllowAny,)
+
+    # 运行使用
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         """
-
         :param request:要解冻的用户的数组Key=[0,1,2,3]
         :return:
         """

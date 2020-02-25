@@ -1,3 +1,5 @@
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from apps.invoice.models import Invoice
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,6 +11,12 @@ from django.core.paginator import Paginator, InvalidPage
 #url:invoice/list
 class InvoiceList(APIView):
     '''分页显示发票信息'''
+    # 测试用
+    # permission_classes = (AllowAny,)
+
+    # 运行使用
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         '''
@@ -21,8 +29,8 @@ class InvoiceList(APIView):
         pageSize: '9'  # 每页显示条目数
         :return:
         '''
-        page_size = request.GET.get('pagesize')
-        current_page = request.GET.get("page")
+        page_size = request.GET.get('pageSize')
+        current_page = request.GET.get("current")
         key = request.GET.get('key')
         if key == 'wait':
             queryset = Invoice.objects.filter(status__in=[0])
@@ -36,14 +44,6 @@ class InvoiceList(APIView):
         # 把url取出来,然后把发票数据取成json格式
         for e in queryset:
             temp = dict()
-            urls = []
-
-            # 多张图片的url的取法
-            # imageset = e.image.all()
-            # for image in imageset:
-            #     urls.append(image.img.url)
-            # temp['imgUrl'] = urls
-
             # 单张图片的用户的url的取法
             image = e.image.first()#这里是避免有多张图片时，出现错误
             if image is None:
@@ -63,6 +63,7 @@ class InvoiceList(APIView):
             temp['sellerInfo'] = e.sellerInfo
             temp['uploader'] = e.uploader_id
             temp['uploadDate'] = e.uploadDate
+            temp['invoiceMoney']=e.invoiceMoney
             data.append(temp)
 
         # 对分页进行处理，并且捕获异常和处理异常

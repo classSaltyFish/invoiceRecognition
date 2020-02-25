@@ -1,3 +1,6 @@
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 from apps.user.models import User
 from apps.user.serializers import UserSerializer
 from rest_framework.views import APIView
@@ -7,11 +10,16 @@ from utils.dataFilter import DataFilter
 from django.core.paginator import Paginator, InvalidPage
 import json
 
-
 # 管理端视图
 # url：user/list/
 class UserList(APIView):
     """分页查询用户"""
+    # 测试用
+    # permission_classes = (AllowAny,)
+
+    # 运行使用
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         '''
