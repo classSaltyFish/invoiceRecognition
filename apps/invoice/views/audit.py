@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 import json
 
-from django.contrib.auth.models import User as Admin
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -24,25 +23,24 @@ class AuditInvoice(APIView):
 	def get(self, request):
 		postbody = request.body
 		json_result = json.loads(postbody)
+		administrator = request.user
 
 		try:
 			invoiceCode = json_result['invoiceCode']
 			operation = json_result['operation']
-			processer = json_result['processer']
 		except KeyError:
 			return Response({"msg": "传入数据格式错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
 		try:
 			invoice = Invoice.objects.get(invoiceCode=invoiceCode)
-			Admin.objects.get(username=processer)
 		except Invoice.DoesNotExist:
 			return Response({"msg": "发票代码错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
-		except Admin.DoesNotExist:
-			return Response({"msg": "处理人信息错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
 		if operation == 'pass':
 			invoice.status = 1
+			invoice.processer = administrator.username
 			invoice.save()
 		elif operation == 'reject':
 			invoice.status = 2
+			invoice.processer = administrator.username
 			invoice.save()
 		else:
 			return Response({"msg": "操作错误错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
