@@ -8,7 +8,7 @@ from django.core.paginator import Paginator, InvalidPage
 
 
 # 管理端视图
-#url:invoice/list
+# url:invoice/list
 class InvoiceList(APIView):
     '''分页显示发票信息'''
     # 测试用
@@ -45,7 +45,7 @@ class InvoiceList(APIView):
         for e in queryset:
             temp = dict()
             # 单张图片的用户的url的取法
-            image = e.image.first()#这里是避免有多张图片时，出现错误
+            image = e.image.first()  # 这里是避免有多张图片时，出现错误
             if image is None:
                 temp['imgUrl'] = ''
             else:
@@ -63,7 +63,7 @@ class InvoiceList(APIView):
             temp['sellerInfo'] = e.sellerInfo
             temp['uploader'] = e.uploader_id
             temp['uploadDate'] = e.uploadDate
-            temp['invoiceMoney']=e.invoiceMoney
+            temp['invoiceMoney'] = e.invoiceMoney
             data.append(temp)
 
         # 对分页进行处理，并且捕获异常和处理异常
@@ -81,4 +81,12 @@ class InvoiceList(APIView):
                 "current": current_page
             }
         }
-        return Response(context, status=status.HTTP_200_OK)
+        originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
+        headers = {
+            'Access-Control-Allow-Origin': originHeads,
+            'Access-Control-Allow-Credentials': True,
+            'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
+            'Access-Control-Max-Age': '3600',
+            'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
+        }
+        return Response(context, status=status.HTTP_200_OK,headers=headers)
