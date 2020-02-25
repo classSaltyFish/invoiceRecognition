@@ -24,16 +24,24 @@ class AuditInvoice(APIView):
 		postbody = request.body
 		json_result = json.loads(postbody)
 		administrator = request.user
+		originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
+		headers = {
+			'Access-Control-Allow-Origin': originHeads,
+			'Access-Control-Allow-Credentials': True,
+			'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
+			'Access-Control-Max-Age': '3600',
+			'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
+		}
 
 		try:
 			invoiceCode = json_result['invoiceCode']
 			operation = json_result['operation']
 		except KeyError:
-			return Response({"msg": "传入数据格式错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"msg": "传入数据格式错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST,headers=headers)
 		try:
 			invoice = Invoice.objects.get(invoiceCode=invoiceCode)
 		except Invoice.DoesNotExist:
-			return Response({"msg": "发票代码错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"msg": "发票代码错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST,headers=headers)
 		if operation == 'pass':
 			invoice.status = 1
 			invoice.processer = administrator.username
@@ -43,5 +51,5 @@ class AuditInvoice(APIView):
 			invoice.processer = administrator.username
 			invoice.save()
 		else:
-			return Response({"msg": "操作错误错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
-		return Response({"msg": "success", "status": "ok"})
+			return Response({"msg": "操作错误错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST,headers=headers)
+		return Response({"msg": "success", "status": "ok"},headers=headers)

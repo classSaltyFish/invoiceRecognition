@@ -60,9 +60,17 @@ class AdminLogin(APIView):
 	def post(self, request):
 		# 从请求的body中获得想要的信息
 
+		originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
+		headers = {
+			'Access-Control-Allow-Origin': originHeads,
+			'Access-Control-Allow-Credentials': True,
+			'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
+			'Access-Control-Max-Age': '3600',
+			'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
+		}
+
 		postbody = request.body
 		json_result = json.loads(postbody)
-
 		# 对拿到的信息进行操作
 		try:
 			admin_info = json_result['user_info']
@@ -85,4 +93,6 @@ class AdminLogin(APIView):
 				"username": username,
 				"token": token.key,
 				"currentAuthority": "admin"
-			})
+			},
+				headers=headers
+			)

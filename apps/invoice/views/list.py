@@ -32,6 +32,15 @@ class InvoiceList(APIView):
         page_size = request.GET.get('pageSize')
         current_page = request.GET.get("current")
         key = request.GET.get('key')
+        originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
+        headers = {
+            'Access-Control-Allow-Origin': originHeads,
+            'Access-Control-Allow-Credentials': True,
+            'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
+            'Access-Control-Max-Age': '3600',
+            'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
+        }
+
         if key == 'wait':
             queryset = Invoice.objects.filter(status__in=[0])
         elif key == 'record':
@@ -71,7 +80,7 @@ class InvoiceList(APIView):
             p = Paginator(data, page_size)
             contacts = p.page(current_page).object_list
         except InvalidPage:
-            return Response({"msg": "页码有错误"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"msg": "页码有错误"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR,headers=headers)
         context = {
             "results": contacts,
             "msg": True,
@@ -80,13 +89,5 @@ class InvoiceList(APIView):
                 "pageSize": page_size,
                 "current": current_page
             }
-        }
-        originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
-        headers = {
-            'Access-Control-Allow-Origin': originHeads,
-            'Access-Control-Allow-Credentials': True,
-            'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
-            'Access-Control-Max-Age': '3600',
-            'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
         }
         return Response(context, status=status.HTTP_200_OK,headers=headers)

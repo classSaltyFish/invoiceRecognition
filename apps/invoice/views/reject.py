@@ -15,10 +15,20 @@ class InvoiceReject(APIView):
         :return:
         '''
         data=json.load(request)
+
+        originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
+        headers = {
+            'Access-Control-Allow-Origin': originHeads,
+            'Access-Control-Allow-Credentials': True,
+            'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
+            'Access-Control-Max-Age': '3600',
+            'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
+        }
+
         invoice_code=data['invoiceCode']
         invoice=Invoice.objects.get(invoiceCode=invoice_code)
         if invoice is None:
-            return Response({'msg':'发票不存在'},status=status.HTTP_404_NOT_FOUND)
+            return Response({'msg':'发票不存在'},status=status.HTTP_404_NOT_FOUND,headers=headers)
         invoice.status=2
         invoice.save()
-        return Response({'msg':'ok'},status=status.HTTP_200_OK)
+        return Response({'msg':'ok'},status=status.HTTP_200_OK,headers=headers)

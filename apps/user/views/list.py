@@ -27,6 +27,15 @@ class UserList(APIView):
         :param request:排序方式 当前页数 和每页显示的数目
         :return:
         '''
+        originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
+        headers = {
+            'Access-Control-Allow-Origin': originHeads,
+            'Access-Control-Allow-Credentials': True,
+            'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
+            'Access-Control-Max-Age': '3600',
+            'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
+        }
+
         data = json.load(request)
         pageSize = data['pageSize']
         sorter = data['sorter']
@@ -45,7 +54,7 @@ class UserList(APIView):
             p = Paginator(queryset, pageSize)
             contacts = p.page(current).object_list
         except InvalidPage:
-            return Response({"msg": "页码有错误"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"msg": "页码有错误"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR,headers=headers)
         # 从每一组数据中挑选出来
 
         serializer=UserSerializer(contacts,many=True)
@@ -58,4 +67,4 @@ class UserList(APIView):
             "pageSize": pageSize,
             "current": current
         }
-        return Response(context, status=status.HTTP_200_OK)
+        return Response(context, status=status.HTTP_200_OK,headers=headers)
