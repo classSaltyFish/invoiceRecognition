@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+apps/invoice/migrations/
+apps/user/migrations/
+invoiceRecognition/local_setting.py

@@ -28,7 +28,7 @@ class SuspendUser(APIView):
                 return Response({'msg': '用户不存在'}, status=status.HTTP_404_NOT_FOUND)
             user.status = 0
             user.save()
-        return Response({'success': 'true'}, status=status.HTTP_200_OK)
+        return Response({'msg': 'true'}, status=status.HTTP_200_OK)
 
 
 # 管理端视图
@@ -53,4 +53,4 @@ class UnSuspendUser(APIView):
                 return Response({'msg': '用户不存在'}, status=status.HTTP_404_NOT_FOUND)
             user.status=1
             user.save()
-        return Response({'success': 'true'}, status=status.HTTP_200_OK)
+        return Response({'msg': 'true'}, status=status.HTTP_200_OK)

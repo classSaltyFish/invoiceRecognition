@@ -3,46 +3,48 @@ from apps.user.serializers import UserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
 from utils.dataFilter import DataFilter
+from django.core.paginator import Paginator, InvalidPage
+import json
 
-#用户分页器
-class UserPagination(PageNumberPagination):
-    page_size = 3
-    page_size_query_param = 'page_size'
-    page_query_param = 'page'
-    max_page_size = 6
 
-#管理端视图
-#url：user/list/
+# 管理端视图
+# url：user/list/
 class UserList(APIView):
     """分页查询用户"""
 
-    def get(self, request):
+    def post(self, request):
         '''
 
         :param request:排序方式 当前页数 和每页显示的数目
         :return:
         '''
-        pageSize = request.GET.get('pagesize')
-        sorter = request.GET.get('sorter')
+        data = json.load(request)
+        pageSize = data['pageSize']
+        sorter = data['sorter']
+        current = data["page"]
+
         # 如果排序方式为空或者无排序方式，就采用默认排序方式
         if sorter is None or sorter == '':
             queryset = User.objects.all().order_by("id")
+        elif str(sorter).endswith('descend'):
+            queryset = User.objects.all().order_by('-' + str(sorter).split("_")[0])
         else:
-            queryset = User.objects.all().order_by(sorter)
-
+            queryset = User.objects.all().order_by(str(sorter).split("_")[0])
         total = queryset.count()
-        current = request.GET.get("page")
 
-        page = UserPagination()
-        UserPagination.page_size = pageSize
-        page_roles = page.paginate_queryset(queryset=queryset, request=request, view=self)
-        serializer = UserSerializer(page_roles, many=True)
+        try:
+            p = Paginator(queryset, pageSize)
+            contacts = p.page(current).object_list
+        except InvalidPage:
+            return Response({"msg": "页码有错误"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         # 从每一组数据中挑选出来
-        data = DataFilter.filter(serializer.data, 'id', 'openId', 'nickname', 'reimbursement', 'status', 'latestSubmit')
+
+        serializer=UserSerializer(contacts,many=True)
+        results = DataFilter.filter(serializer.data, 'id', 'openId', 'nickname', 'reimbursement', 'status',
+                                    'latestSubmit')
         context = {
-            "results": data,
+            "results": results,
             "msg": True,
             "total": total,
             "pageSize": pageSize,
