@@ -26,7 +26,7 @@ SECRET_KEY = '4c+ocncnbx-eo&txa(yb!x-z&pg$53nvex=+o+au@7v-6__$x+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -107,13 +107,13 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    # # 权限认证
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',            # IsAuthenticated 仅通过认证的用户
-    #     'rest_framework.permissions.AllowAny',                   # AllowAny 允许所有用户
-    #     'rest_framework.permissions.IsAdminUser',                # IsAdminUser 仅管理员用户
-    #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',  # IsAuthenticatedOrReadOnly 认证的用户可以完全操作，否则只能get读取
-    # ),
+    # 权限认证
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',            # IsAuthenticated 仅通过认证的用户
+        'rest_framework.permissions.AllowAny',                   # AllowAny 允许所有用户
+        'rest_framework.permissions.IsAdminUser',                # IsAdminUser 仅管理员用户
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',  # IsAuthenticatedOrReadOnly 认证的用户可以完全操作，否则只能get读取
+    ),
     # 身份认证
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
@@ -140,6 +140,10 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+STATIC_URL = '/static/'
+STATICFILES_DIR = [
+    os.path.join(BASE_DIR, 'static'),
+]
+STATIC_ROOT = '/root/invoiceRecognition/static/'

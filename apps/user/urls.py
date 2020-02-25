@@ -15,7 +15,7 @@ urlpatterns = [
     # 管理系统端接口
     path('adminLogin/', AdminLogin.as_view(), name='admin_login'),
     path('delete/', DeleteUser.as_view(), name='delete'),
-    path('suspend/',SuspendUser.as_view(),name='suspend'),
-    path('unsuspend/',UnSuspendUser.as_view(),name='unsuspend'),
-    path('list/',UserList.as_view(),name='list')
+    path('suspend/', SuspendUser.as_view(), name='suspend'),
+    path('unsuspend/', UnSuspendUser.as_view(), name='unsuspend'),
+    path('list/', UserList.as_view(), name='list')
 ]

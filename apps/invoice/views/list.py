@@ -1,3 +1,6 @@
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 from apps.invoice.models import Invoice
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -5,31 +8,20 @@ from rest_framework import status
 from django.core.paginator import Paginator, InvalidPage
 
 
-# 管理端视图
-#url:invoice/list
+# 管理系统类视图
 class InvoiceList(APIView):
-    '''分页显示发票信息'''
+    # 测试用
+    # permission_classes = (AllowAny,)
+
+    # 运行使用
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        '''
-        GET请求
-        :param request:
-        key:   'all'  # 请求所有发票
-                'wait'  # 请求待审核发票
-                'record'  #请求已审核的发票
-        current:  '1'  # 当前页码
-        pageSize: '9'  # 每页显示条目数
-        :return:
-        '''
         page_size = request.GET.get('pagesize')
         current_page = request.GET.get("page")
-        key = request.GET.get('key')
-        if key == 'wait':
-            queryset = Invoice.objects.filter(status__in=[0])
-        elif key == 'record':
-            queryset = Invoice.objects.filter(status__in=[1])
-        else:
-            queryset = Invoice.objects.all()
+
+        queryset = Invoice.objects.all()
         total = queryset.count()
 
         data = []
@@ -38,18 +30,11 @@ class InvoiceList(APIView):
             temp = dict()
             urls = []
 
-            # 多张图片的url的取法
-            # imageset = e.image.all()
-            # for image in imageset:
-            #     urls.append(image.img.url)
-            # temp['imgUrl'] = urls
+            imageset = e.image.all()
+            for image in imageset:
+                urls.append(image.img.url)
+            temp['imgUrl'] = urls
 
-            # 单张图片的用户的url的取法
-            image = e.image.first()#这里是避免有多张图片时，出现错误
-            if image is None:
-                temp['imgUrl'] = ''
-            else:
-                temp['imgUrl'] = image.img.url
             temp['id'] = e.id
             temp['invoiceCode'] = e.invoiceCode
             temp['invoiceDate'] = e.invoiceDate

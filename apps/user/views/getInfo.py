@@ -2,6 +2,7 @@
 import json
 
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -10,6 +11,8 @@ from apps.user.models import User
 
 # 小程序端类视图
 class GetUseInfo(APIView):
+	permission_classes = (AllowAny,)
+
 	def get(self, request):
 		postbody = request.body
 		json_result = json.loads(postbody)
@@ -26,9 +29,3 @@ class GetUseInfo(APIView):
 				"no_reimbursement": user.no_reimbursement
 			}
 			return Response({"use_info": data})
-
-
-# 管理系统类视图
-class GetUserList(APIView):
-	def get(self, request, category="all"):
-		pass

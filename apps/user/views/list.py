@@ -1,3 +1,6 @@
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 from apps.user.models import User
 from apps.user.serializers import UserSerializer
 from rest_framework.views import APIView
@@ -6,24 +9,32 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from utils.dataFilter import DataFilter
 
-#用户分页器
+
+# 用户分页器
 class UserPagination(PageNumberPagination):
     page_size = 3
     page_size_query_param = 'page_size'
     page_query_param = 'page'
     max_page_size = 6
 
-#管理端视图
-#url：user/list/
+
+# 管理端视图
+# url：user/list/
 class UserList(APIView):
     """分页查询用户"""
+    # 测试用
+    # permission_classes = (AllowAny,)
+
+    # 运行使用
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        '''
+        """
 
         :param request:排序方式 当前页数 和每页显示的数目
         :return:
-        '''
+        """
         pageSize = request.GET.get('pagesize')
         sorter = request.GET.get('sorter')
         # 如果排序方式为空或者无排序方式，就采用默认排序方式

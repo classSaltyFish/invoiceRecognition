@@ -3,6 +3,7 @@
 import json
 
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -10,7 +11,10 @@ from apps.user.models import User
 from apps.invoice.models import Invoice, Image
 
 
+# 小程序端类视图
 class CreateInvoice(APIView):
+	permission_classes = (AllowAny,)
+
 	def post(self, request):
 		postbody = request.body
 		json_result = json.loads(postbody)
@@ -38,6 +42,7 @@ class CreateInvoice(APIView):
 				img=request.FILES.get('image', ''),
 				invoice=new_invoice
 			)
+			new_img.save()
 		except KeyError:
 			return Response({"mag": "传入数据格式错误"}, status=status.HTTP_400_BAD_REQUEST)
 		except User.DoesNotExist:

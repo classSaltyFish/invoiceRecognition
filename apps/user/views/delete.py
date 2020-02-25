@@ -1,3 +1,6 @@
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 from apps.user.models import User
 from apps.invoice.models import Invoice
 from rest_framework.views import APIView
@@ -11,6 +14,12 @@ import json
 # url:user/deleteUser
 class DeleteUser(APIView):
     """删除用户"""
+    # 测试用
+    # permission_classes = (AllowAny,)
+
+    # 运行使用
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         """
