@@ -1,22 +1,24 @@
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from apps.invoice.models import Invoice
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.paginator import Paginator, InvalidPage
+import json
 
 
 # 管理端视图
 # url:invoice/list
 class InvoiceList(APIView):
     '''分页显示发票信息'''
-    # 测试用
+    # # 测试用
     # permission_classes = (AllowAny,)
-
-    # 运行使用
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    #
+    # # 运行使用
+    # authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         '''

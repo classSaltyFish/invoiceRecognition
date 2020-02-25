@@ -4,7 +4,7 @@
 # mysql settings
 MYSQL_HOST = 'localhost'
 MYSQL_PORT = '3306'
-MYSQL_DBNAME = 'recognition2'
+MYSQL_DBNAME = 'recognition3'
 MYSQL_USERNAME = 'root'
 MYSQL_PASSWORD = 'root'
 
