@@ -15,7 +15,7 @@ class Invoice(models.Model):
 	invoiceNum = models.CharField(max_length=30, blank=True, default='', verbose_name='发票号码')
 	invoiceDate = models.DateField(blank=True, default=timezone.now, verbose_name='开票日期')
 	invoiceType = models.CharField(max_length=30, blank=True, default='', verbose_name='发票类型')
-	invoiceMoney=models.CharField(max_length=10,blank=True,default='',verbose_name='发票金额')
+	invoiceMoney = models.FloatField(blank=True, default=0.00, verbose_name='发票金额')
 	sellerInfo = models.TextField(blank=True, default='', verbose_name='卖家信息')  # 存储形式为json_string
 	purchaserInfo = models.TextField(blank=True, default='', verbose_name='买家信息')  # 存储形式为json_string
 	commodityInfo = models.TextField(blank=True, default='', verbose_name='商品信息')  # 存储形式为json_string

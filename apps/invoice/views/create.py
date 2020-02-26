@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -24,6 +25,7 @@ class CreateInvoice(APIView):
 
 			invoice_info = json_result['invoice_info']
 			invoiceCode = invoice_info['invoiceCode']
+			invoiceMoney = invoice_info['invoiceMoney']
 			if Invoice.objects.filter(invoiceCode=invoiceCode).count() != 0:
 				return Response({"mag": "exist"})
 			new_invoice = Invoice(
@@ -31,6 +33,7 @@ class CreateInvoice(APIView):
 				invoiceNum=invoice_info['invoiceNum'],
 				invoiceDate=invoice_info['invoiceDate'],
 				invoiceType=invoice_info['invoiceType'],
+				invoiceMoney=invoiceMoney,
 				sellerInfo=invoice_info['sellerInfo'],
 				purchaserInfo=invoice_info['purchaserInfo'],
 				commodityInfo=invoice_info['commodityInfo'],
@@ -47,4 +50,7 @@ class CreateInvoice(APIView):
 			return Response({"mag": "传入数据格式错误"}, status=status.HTTP_400_BAD_REQUEST)
 		except User.DoesNotExist:
 			return Response({"mag": "openId错误"}, status=status.HTTP_400_BAD_REQUEST)
+		user.no_reimbursement += invoiceMoney
+		user.latestSubmit = timezone.now()
+		user.save()
 		return Response({"mag": "success"})
