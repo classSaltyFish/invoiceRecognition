@@ -66,12 +66,12 @@ class InvoiceList(APIView):
             temp['invoiceDate'] = e.invoiceDate
             temp['invoiceNum'] = e.invoiceNum
             temp['invoiceType'] = e.invoiceType
-            temp['commodityInfo'] = e.commodityInfo
+            temp['commodityInfo'] = json.loads(e.commodityInfo)
             temp['status'] = e.status
             temp['processDate'] = e.processDate
             temp['processor'] = e.processer
-            temp['purchaseInfo'] = e.purchaserInfo
-            temp['sellerInfo'] = e.sellerInfo
+            temp['purchaseInfo'] = json.loads(e.purchaserInfo)
+            temp['sellerInfo'] = json.loads(e.sellerInfo)
             temp['uploader'] = e.uploader_id
             temp['uploadDate'] = e.uploadDate
             temp['invoiceMoney'] = e.invoiceMoney
