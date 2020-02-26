@@ -5,6 +5,7 @@ from apps.invoice.serializers import InvoiceSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+import json
 
 
 # Create your views here.
@@ -14,7 +15,7 @@ from rest_framework import status
 class ShowInvoices(APIView):
     """
     显示用户未得到报销和未通过的发票
-    url：/invoices/retrieveInvoice
+    url：/invoice/showInvoice
 
     get：
     返回用户的发票信息
@@ -34,18 +35,37 @@ class ShowInvoices(APIView):
                 'msg': '用户不存在'
             }
             return Response(context, status=status.HTTP_404_NOT_FOUND)
-        result = Invoice.objects.filter(uploader__openId=openId, status__in=[0, 2])
-        serializer = InvoiceSerializer(result, many=True)
+        queryset = Invoice.objects.filter(uploader__openId=openId, status__in=[0, 2])
 
-        # data=[]
-        # for elem in serializer.data:
-        #     temp = dict()
-        #     temp['invoiceCode']=elem['invoiceCode']
-        #     temp['status']=elem['status']
-        #     data.append(temp)
+        data = []
+        # 把url取出来,然后把发票数据取成json格式
+        for e in queryset:
+            temp = dict()
+            # 单张图片的用户的url的取法
+            image = e.image.first()  # 这里是避免有多张图片时，出现错误
+            if image is None:
+                temp['imgUrl'] = ''
+            else:
+                temp['imgUrl'] = image.img.url
+            temp['id'] = e.id
+            temp['invoiceCode'] = e.invoiceCode
+            temp['invoiceDate'] = e.invoiceDate
+            temp['invoiceNum'] = e.invoiceNum
+            temp['invoiceType'] = e.invoiceType
+            temp['commodityInfo'] = json.loads(e.commodityInfo)
+            temp['status'] = e.status
+            temp['processDate'] = e.processDate
+            temp['processor'] = e.processer
+            temp['purchaseInfo'] = json.loads(e.purchaserInfo)
+            temp['sellerInfo'] = json.loads(e.sellerInfo)
+            temp['uploader'] = e.uploader_id
+            temp['uploadDate'] = e.uploadDate
+            temp['invoiceMoney'] = e.invoiceMoney
+            data.append(temp)
+
         context = {
             'msg': 'ok',
-            'results': serializer.data
+            'results': data
         }
         return Response(context, status=status.HTTP_200_OK)
 
@@ -55,6 +75,7 @@ class ReimburseInvoice(APIView):
     """
     显示得到报销的发票
     """
+    permission_classes = (AllowAny,)
 
     def get(self, request):
         """
@@ -68,10 +89,35 @@ class ReimburseInvoice(APIView):
                 'msg': '用户不存在'
             }
             return Response(context, status=status.HTTP_404_NOT_FOUND)
-        result = Invoice.objects.filter(uploader__openId=openId, status__in=[1])
-        serializer = InvoiceSerializer(result, many=True)
+        queryset = Invoice.objects.filter(uploader__openId=openId, status__in=[1])
+        data = []
+        # 把url取出来,然后把发票数据取成json格式
+        for e in queryset:
+            temp = dict()
+            # 单张图片的用户的url的取法
+            image = e.image.first()  # 这里是避免有多张图片时，出现错误
+            if image is None:
+                temp['imgUrl'] = ''
+            else:
+                temp['imgUrl'] = image.img.url
+            temp['id'] = e.id
+            temp['invoiceCode'] = e.invoiceCode
+            temp['invoiceDate'] = e.invoiceDate
+            temp['invoiceNum'] = e.invoiceNum
+            temp['invoiceType'] = e.invoiceType
+            temp['commodityInfo'] = json.loads(e.commodityInfo)
+            temp['status'] = e.status
+            temp['processDate'] = e.processDate
+            temp['processor'] = e.processer
+            temp['purchaseInfo'] = json.loads(e.purchaserInfo)
+            temp['sellerInfo'] = json.loads(e.sellerInfo)
+            temp['uploader'] = e.uploader_id
+            temp['uploadDate'] = e.uploadDate
+            temp['invoiceMoney'] = e.invoiceMoney
+            data.append(temp)
+
         context = {
             'msg': 'ok',
-            'results': serializer.data
+            'results': data
         }
         return Response(context, status=status.HTTP_200_OK)
