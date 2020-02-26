@@ -61,7 +61,7 @@ class UserList(APIView):
         results = DataFilter.filter(serializer.data, 'id', 'openId', 'nickname', 'reimbursement', 'status',
                                     'latestSubmit')
         context = {
-            "results": results,
+            "data": results,
             "msg": True,
             "total": total,
             "pageSize": pageSize,
