@@ -82,7 +82,7 @@ class InvoiceList(APIView):
             p = Paginator(data, page_size)
             contacts = p.page(current_page).object_list
         except InvalidPage:
-            return Response({"msg": "页码有错误"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR,headers=headers)
+            return Response({"msg": "页码有错误"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR, headers=headers)
         context = {
             "results": contacts,
             "msg": True,
@@ -92,4 +92,4 @@ class InvoiceList(APIView):
                 "current": current_page
             }
         }
-        return Response(context, status=status.HTTP_200_OK,headers=headers)
+        return Response(context, status=status.HTTP_200_OK, headers=headers)
