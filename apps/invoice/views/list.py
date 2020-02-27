@@ -17,8 +17,8 @@ class InvoiceList(APIView):
     # permission_classes = (AllowAny,)
     #
     # # 运行使用
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         '''
@@ -34,19 +34,11 @@ class InvoiceList(APIView):
         page_size = request.GET.get('pageSize')
         current_page = request.GET.get("current")
         key = request.GET.get('key')
-        originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
-        headers = {
-            'Access-Control-Allow-Origin': originHeads,
-            'Access-Control-Allow-Credentials': True,
-            'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
-            'Access-Control-Max-Age': '3600',
-            'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
-        }
 
         if key == 'wait':
             queryset = Invoice.objects.filter(status__in=[0])
         elif key == 'record':
-            queryset = Invoice.objects.filter(status__in=[1])
+            queryset = Invoice.objects.filter(status__in=[1,2])
         else:
             queryset = Invoice.objects.all()
         total = queryset.count()
@@ -92,4 +84,4 @@ class InvoiceList(APIView):
                 "current": current_page
             }
         }
-        return Response(context, status=status.HTTP_200_OK,headers=headers)
+        return Response(context, status=status.HTTP_200_OK)
