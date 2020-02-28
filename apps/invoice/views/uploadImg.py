@@ -10,6 +10,7 @@ from apps.user.models import User
 from apps.invoice.models import Invoice, Image
 
 
+# 用来生产测试数据的视图
 class UploadImg(APIView):
 	permission_classes = (AllowAny,)
 

@@ -11,7 +11,7 @@ class Invoice(models.Model):
 		(1, '审批通过'),
 		(2, '退回'),
 	]
-	invoiceCode = models.CharField(max_length=30, blank=False, verbose_name='发票代码',unique=True)
+	invoiceCode = models.CharField(max_length=30, blank=False, verbose_name='发票代码', unique=True)
 	invoiceNum = models.CharField(max_length=30, blank=True, default='', verbose_name='发票号码')
 	invoiceDate = models.DateField(blank=True, default=timezone.now, verbose_name='开票日期')
 	invoiceType = models.CharField(max_length=30, blank=True, default='', verbose_name='发票类型')

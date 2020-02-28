@@ -1,13 +1,12 @@
+import json
+
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-
-from apps.user.models import User
-from apps.invoice.models import Invoice
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from apps.user.serializers import UserSerializer
-import json
+
+from apps.user.models import User
 
 
 # 管理端的删除用户视图
@@ -27,15 +26,6 @@ class DeleteUser(APIView):
         :param request:要删除的用户的数组Key=[0,1,2,3]
         :return:
         """
-        originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
-        headers = {
-            'Access-Control-Allow-Origin': originHeads,
-            'Access-Control-Allow-Credentials': True,
-            'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
-            'Access-Control-Max-Age': '3600',
-            'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
-        }
-
         data = json.load(request)
         key = data['key']
         for i in key:
@@ -44,6 +34,6 @@ class DeleteUser(APIView):
                 user = User.objects.get(id=userid)
                 # 如果用户不存在的话，返回错误信息
             except User.DoesNotExist:
-                return Response({'msg': '用户不存在'}, status=status.HTTP_404_NOT_FOUND,headers=headers)
+                return Response({'msg': '用户不存在'}, status=status.HTTP_400_BAD_REQUEST)
             user.delete()
-        return Response({'success': 'true'}, status=status.HTTP_200_OK,headers=headers)
+        return Response({'success': 'true'}, status=status.HTTP_200_OK)

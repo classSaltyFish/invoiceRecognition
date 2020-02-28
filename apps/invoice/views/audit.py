@@ -20,29 +20,21 @@ class AuditInvoice(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	def get(self, request):
+	def post(self, request):
 		postbody = request.body
 		json_result = json.loads(postbody)
 		administrator = request.user
-		originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
-		headers = {
-			'Access-Control-Allow-Origin': originHeads,
-			'Access-Control-Allow-Credentials': True,
-			'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
-			'Access-Control-Max-Age': '3600',
-			'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
-		}
 
 		try:
 			invoiceCode = json_result['invoiceCode']
 			operation = json_result['operation']
 		except KeyError:
-			return Response({"msg": "传入数据格式错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST, headers=headers)
+			return Response({"msg": "传入数据格式错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
 		try:
 			invoice = Invoice.objects.get(invoiceCode=invoiceCode)
 			user = invoice.uploader
 		except :
-			return Response({"msg": "发票信息错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST, headers=headers)
+			return Response({"msg": "发票信息错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
 		if operation == 'pass':
 			invoice.status = 1
 			user.reimbursement += invoice.invoiceMoney
@@ -50,8 +42,8 @@ class AuditInvoice(APIView):
 			invoice.status = 2
 			user.no_reimbursement -= invoice.invoiceMoney
 		else:
-			return Response({"msg": "操作错误错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST, headers=headers)
+			return Response({"msg": "操作错误错误", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
 		invoice.processer = administrator.username
 		invoice.save()
 		user.save()
-		return Response({"msg": "success", "status": "ok"}, headers=headers)
+		return Response({"msg": "success", "status": "ok"})

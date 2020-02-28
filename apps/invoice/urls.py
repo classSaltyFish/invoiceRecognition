@@ -5,8 +5,6 @@ from apps.invoice.views.recognize import RecognizeInvoice
 from apps.invoice.views.create import CreateInvoice
 from apps.invoice.views.show import ReimburseInvoice, ShowInvoices
 from apps.invoice.views.list import InvoiceList
-from apps.invoice.views.passby import InvoicePass
-from apps.invoice.views.reject import InvoiceReject
 from apps.invoice.views.audit import AuditInvoice
 from apps.invoice.views.uploadImg import UploadImg
 
@@ -15,10 +13,8 @@ urlpatterns = [
 	path('createInvoice/', CreateInvoice.as_view(), name='createInvoice'),
 	path('showInvoice/', ShowInvoices.as_view()),
 	path('reimburseInvoice/', ReimburseInvoice.as_view()),
-	#管理端视图
-	path('list/',InvoiceList.as_view()),
-	path('pass/',InvoicePass.as_view()),
-	path('reject/',InvoiceReject.as_view()),
+	# 管理端视图
+	path('list/', InvoiceList.as_view()),
 	path('auditInvoice/', AuditInvoice.as_view()),
 	path('upload/', UploadImg.as_view())
 ]

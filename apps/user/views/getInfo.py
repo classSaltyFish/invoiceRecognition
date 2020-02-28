@@ -42,18 +42,10 @@ class GetAdminInfo(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
-		originHeads = request.META.get("HTTP_ORIGIN")  # 获取请求的主机地址
-		headers = {
-			'Access-Control-Allow-Origin': originHeads,
-			'Access-Control-Allow-Credentials': True,
-			'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
-			'Access-Control-Max-Age': '3600',
-			'Access-Control-Allow-Headers': 'token,Origin, X-Requested-With, Content-Type, Accept,mid,X-Token'
-		}
 		administrator = request.user
 		data = {
 			"msg": "success",
 			"name": administrator.username,
 			"userid": administrator.id
 		}
-		return Response(data,headers=headers)
+		return Response(data)
