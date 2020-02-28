@@ -32,14 +32,14 @@ class InvoiceList(APIView):
         pageSize: '9'  # 每页显示条目数
         :return:
         """
-        page_size = request.GET.get('pageSize')
-        current_page = request.GET.get("current")
+        page_size = int(request.GET.get('pageSize'))
+        current_page = int(request.GET.get("current"))
         key = request.GET.get('key')
 
         if key == 'wait':
             queryset = Invoice.objects.filter(status__in=[0])
         elif key == 'record':
-            queryset = Invoice.objects.filter(status__in=[1,2])
+            queryset = Invoice.objects.filter(status__in=[1, 2])
         else:
             queryset = Invoice.objects.all()
         total = queryset.count()
@@ -50,7 +50,7 @@ class InvoiceList(APIView):
             contacts = p.page(current_page)
             result = MySerializer(instance=contacts, many=True)
         except InvalidPage:
-            return Response({"msg": "页码有错误"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"msg": "页码有错误"}, status=status.HTTP_400_BAD_REQUEST)
         context = {
             "results": result.data,
             "msg": True,

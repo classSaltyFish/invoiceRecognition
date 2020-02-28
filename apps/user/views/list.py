@@ -32,7 +32,7 @@ class UserList(APIView):
         data = json.load(request)
         pageSize = data['pageSize']
         sorter = data['sorter']
-        current = data["page"]
+        current = data["current"]
 
         # 如果排序方式为空或者无排序方式，就采用默认排序方式
         if sorter is None or sorter == '':
